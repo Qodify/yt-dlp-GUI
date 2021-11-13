@@ -107,6 +107,7 @@ namespace YTDL
             this.tcVideoOrAudio.Size = new System.Drawing.Size(397, 120);
             this.tcVideoOrAudio.TabIndex = 3;
             this.tcVideoOrAudio.SelectedIndexChanged += TcVideoOrAudio_SelectedIndexChanged;
+
             // 
             // tpVideo
             // 
