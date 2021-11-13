@@ -24,63 +24,31 @@ namespace YTDL
             backgroundWorker1.WorkerSupportsCancellation = true;
         }
 
-
-        private void Cancel_Click(object sender, EventArgs e)
+        //private bool isInvalidURL()
+        //{
+        //    if (!tbURL.Text.Contains("https://www.youtube.com/"))
+        //    {
+        //        MessageBox.Show("Enter valid Youtube URL", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        private void btnExecute_Click(object sender, EventArgs e)
         {
-            if (backgroundWorker1.WorkerSupportsCancellation == true)
+            var dgvVideoCellsValue = dgvVideoQuality.SelectedCells;
+            var dgvAudioCellsValue = dgvAudioQuality.SelectedCells;
+            var audioQty = "";
+            var videoQty = "";
+            if (dgvAudioCellsValue.Count == 0 || dgvVideoCellsValue.Count == 0)
             {
-                // Cancel the asynchronous operation.
-                backgroundWorker1.CancelAsync();
-            }
-        }
-
-        // This event handler is where the time-consuming work is done.
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker worker = sender as BackgroundWorker;
-
-            for (int i = 1; i <= 10; i++)
-            {
-                if (worker.CancellationPending == true)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-                else
-                {
-
-           
-                    worker.ReportProgress(i * 10);
-                }
-            }
-        }
-
-        // This event handler updates the progress.
-        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            resultLabel.Text = (e.ProgressPercentage.ToString() + "%");
-        }
-
-        // This event handler deals with the results of the background operation.
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Cancelled == true)
-            {
-                resultLabel.Text = "Canceled!";
-            }
-            else if (e.Error != null)
-            {
-                resultLabel.Text = "Error: " + e.Error.Message;
+                cmd.DefaultQuality = true;
             }
             else
             {
-                resultLabel.Text = "Done!";
+                audioQty = dgvAudioCellsValue[0].Value.ToString().Split(' ')[0];
+                videoQty = dgvVideoCellsValue[0].Value.ToString().Split(' ')[0];
+
             }
-        }
-
-
-        private void btnExecute_Click(object sender, EventArgs e)
-        {
             if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
@@ -88,79 +56,137 @@ namespace YTDL
 
             rtbLogs.Text = String.Empty;
             var dir = folderBrowserDialog.SelectedPath;
-            cmd.setOutputFilePath(folderBrowserDialog.SelectedPath);
+            cmd.SelectedPath = folderBrowserDialog.SelectedPath;
             Cursor.Current = Cursors.WaitCursor;
             // Perform a time consuming operation and report progress.
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = cmd.ExeString,
-                Arguments = string.Join(" ", cmd.Arguments, tbURL.Text),
+                Arguments = string.Join(" ", cmd.Arguments, cmd.DefaultQuality ? "-f best" : cmd.IsAudio ? $"-f {audioQty}" : $"-f {videoQty}+{audioQty}", tbURL.Text),
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             };
-            //Thread th = new Thread(() =>
-            //{
+
             using (Process p = Process.Start(psi))
             {
                 StringBuilder sb = new StringBuilder();
                 while (!p.StandardOutput.EndOfStream)
                 {
+
+                    sb.Clear();
                     sb.Append(p.StandardOutput.ReadLine());
                     if (string.IsNullOrWhiteSpace(sb.ToString())) continue;
-                    rtbLogs.Text += sb.ToString() + "\n";
-                    sb.Clear();
+
+                    rtbLogs.Text += sb.AppendLine().ToString();
+                }
+                p.WaitForExit();
+                rtbLogs.ScrollToCaret();
+                if (p.ExitCode != 0)
+                {
+                    MessageBox.Show("Something went wrong", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            Process.Start("explorer.exe", dir);
+
+        }
+
+        private void btnShowQualities_Click(object sender, EventArgs e)
+        {
+            IList<string> list_string_audio = new List<string>();
+            IList<string> list_string_video = new List<string>();
+            int count = 0;
+            bool flag = false;
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = cmd.ExeString,
+                Arguments = "-F " + tbURL.Text,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+            };
+            using Process p = Process.Start(psi);
+
+            StringBuilder strBuil = new();
+            while (!p.StandardOutput.EndOfStream)
+            {
+                strBuil.Clear().Append(p.StandardOutput.ReadLine());
+                if (string.IsNullOrWhiteSpace(strBuil.ToString())) continue;
+                if (strBuil.ToString().Contains("Available formats for"))
+                {
+                    flag = true;
+                    continue;
+                }
+                if (flag == true && count < 3) count++;
+
+                if (flag && count == 3)
+                {
+                    if (strBuil.ToString().Contains("DASH")) continue;
+                    if (strBuil.ToString().Contains("audio only"))
+                    {
+                        list_string_audio.Add(strBuil.ToString());
+                    }
+                    else
+                    {
+                        list_string_video.Add(strBuil.ToString());
+                    }
+                }
+                //if (string.IsNullOrWhiteSpace(strBuil.ToString())) continue;
+                //rtbLogs.Text += strBuil.AppendLine().ToString();
+            }
+            p.WaitForExit();
+
+            if (p.ExitCode != 0)
+            {
+                MessageBox.Show("Something went wrong", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
+            dgvAudioQuality.DataSource = list_string_audio.Select(x => new { Value = x }).ToList();
+            dgvVideoQuality.DataSource = list_string_video.Select(x => new { Value = x }).ToList();
+
+            int nRowIndex = dgvAudioQuality.Rows.Count - 1;
+            dgvAudioQuality.Rows[nRowIndex].Selected = true;
+            dgvAudioQuality.Rows[nRowIndex].Cells[0].Selected = true;
+            dgvAudioQuality.FirstDisplayedScrollingRowIndex = nRowIndex;
+
+            nRowIndex = dgvVideoQuality.Rows.Count - 1;
+            dgvVideoQuality.Rows[nRowIndex].Selected = true;
+            dgvVideoQuality.Rows[nRowIndex].Cells[0].Selected = true;
+            dgvVideoQuality.FirstDisplayedScrollingRowIndex = nRowIndex;
+        }
+        private void btnUpdater(object sender, EventArgs e)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = cmd.ExeString,
+                Arguments = "-U",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+            };
+            using (Process p = Process.Start(psi))
+            {
+                while (!p.StandardOutput.EndOfStream)
+                {
+                    string line = p.StandardOutput.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    rtbLogs.Text += line + "\n";
                 }
                 rtbLogs.Text = rtbLogs.Text.Remove(rtbLogs.Text.Length - 3);
                 p.WaitForExit();
+                // Note: You can process p.ExitCode here.  
             }
-            Process.Start("explorer.exe", dir);
+
             Cursor.Current = Cursors.Default;
             rtbLogs.ScrollToCaret();
-            //if (!backgroundWorker1.IsBusy)
-            //{
-            //    // Start the asynchronous operation.
-            //    backgroundWorker1.RunWorkerAsync();
-            //}
         }
-
-
-        public void Doing()
-        {
-
-        }
-
-                // Note: You can process p.ExitCode here.  
-                //})
-                //{ IsBackground = true };
-                //th.Start();
-                //if (!cmd.IsAudio)
-                //{
-                //    string pattern = "*.webm";
-                //    var directory = new DirectoryInfo(dir);
-                //    var myFile = directory.GetFiles(pattern).OrderByDescending(f => f.LastWriteTime).First();
-                //    psi = new ProcessStartInfo
-                //    {
-                //        FileName = "ffmpeg",
-                //        Arguments = "- i " + myFile.Name + "- qscale 0 " + myFile.Name.Replace(".webm", ".mp4"),
-                //        CreateNoWindow = true,
-                //        WindowStyle = ProcessWindowStyle.Hidden,
-                //        UseShellExecute = false,
-                //        RedirectStandardOutput = true,
-                //    };
-                //    using (Process p = Process.Start(psi))
-                //    {
-                //        while (!p.StandardOutput.EndOfStream)
-                //        {
-                //            string line = p.StandardOutput.ReadLine();
-                //            if (string.IsNullOrWhiteSpace(line)) continue;
-                //            rtbLogs.Text += line + "\n";
-                //        }
-                //        rtbLogs.Text = rtbLogs.Text.Remove(rtbLogs.Text.Length - 3);
-                //        p.WaitForExit();
-                //    }
-                //}
 
         private void cbDownloadPlaylist_CheckedChanged(object sender, EventArgs e)
             => cmd.DownloadPlaylist = cbDownloadPlaylist.Checked;
@@ -189,51 +215,49 @@ namespace YTDL
         }
 
         private void rbQualityGood_CheckedChanged(object sender, EventArgs e)
-            => cmd.AudioQuality = AudioQuality.Good;
+        {
+            if (rbToMP4.Checked) cmd.AudioBitrate = AudioBitrate.Good;
+        }
 
         private void rbQualityGreat_CheckedChanged(object sender, EventArgs e)
-            => cmd.AudioQuality = AudioQuality.Great;
+        {
+            if (rbToMP4.Checked) cmd.AudioBitrate = AudioBitrate.Great;
+        }
 
         private void rbQualityBest_CheckedChanged(object sender, EventArgs e)
-            => cmd.AudioQuality = AudioQuality.Best;
-
-        private void btnUpdater(object sender, EventArgs e)
         {
-            ProcessStartInfo psi = new ProcessStartInfo
-            {
-                FileName = cmd.ExeString,
-                Arguments = "-U",
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-            };
-            using (Process p = Process.Start(psi))
-            {
-                while (!p.StandardOutput.EndOfStream)
-                {
-                    string line = p.StandardOutput.ReadLine();
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-                    rtbLogs.Text += line + "\n";
-                }
-                rtbLogs.Text = rtbLogs.Text.Remove(rtbLogs.Text.Length - 3);
-                p.WaitForExit();
-                // Note: You can process p.ExitCode here.  
-            }
-            //})
-            //{ IsBackground = true };
-            //th.Start();
-            Cursor.Current = Cursors.Default;
-            rtbLogs.ScrollToCaret();
+            if (rbToMP4.Checked) cmd.AudioBitrate = AudioBitrate.Best;
         }
 
         private void cbBestVideoQuality_CheckedChanged(object sender, EventArgs e)
-            => cmd.BestVideoQuality = cbBestVideoQuality.Checked;
+            => cmd.DefaultQuality = cbBestVideoQuality.Checked;
 
-        private void cbFormatToMP3_CheckedChanged(object sender, EventArgs e)
+
+        private void rbToMP3_CheckedChanged(object sender, EventArgs e)
         {
-            cmd.IsAudioFormatMP3 = cbFormatToMP3.Checked;
+            if (rbToMP3.Checked) cmd.AudioFormat = AudioFormat.mp3;
         }
 
+        private void rbToOPUS_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbToOPUS.Checked) cmd.AudioFormat = AudioFormat.opus;
+        }
+
+
+
+        private void rbMP4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbToMP4.Checked) cmd.VideoFormat = VideoFormat.mp4;
+        }
+
+        private void rbMKV_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbToMKV.Checked) cmd.VideoFormat = VideoFormat.mkv;
+        }
+
+        private void rbWEBM_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbToWEBM.Checked) cmd.VideoFormat = VideoFormat.webm;
+        }
     }
 }

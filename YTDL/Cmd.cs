@@ -1,68 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace YTDL
 {
-    public enum AudioQuality
+    public enum AudioBitrate
     {
-        Good = 5,
-        Great = 8,
-        Best = 10
+        Good,
+        Great,
+        Best
+    }
+    public enum AudioFormat
+    {
+        mp3,
+        opus
+    }
+
+    public enum VideoFormat
+    {
+        mp4,
+        mkv,
+        webm
     }
 
     public class Cmd
     {
-        public string OutputFilePath { get; set; }
-        public bool IsAudio { get; set; }
-        public string ArgIsAudio => "--extract-audio";
-        public bool IsAudioFormatMP3 { get; set; }
-        public string ArgAudioFormat => "--audio-format mp3";
-        public string ArgAudioQualityGood => "--audio-quality 5";
-        public string ArgAudioQualityGreat => "--audio-quality 3";
-        public string ArgAudioQualityBest => "--audio-quality 0";
-        public AudioQuality AudioQuality { get; set; }
+        public AudioBitrate AudioBitrate { get; set; }
+        public AudioFormat AudioFormat { get; set; }
+        public VideoFormat VideoFormat { get; set; }
 
-        public bool BestVideoQuality { get; set; }
-        public string ArgBestVideoQuality => "-f bestvideo+bestaudio";
 
         public string ExeString => "yt-dlp.exe";
+        public string SelectedPath { get; internal set; }
+
+        public bool IsAudio { get; set; }
+
+        public bool DefaultQuality { get; set; }
         public bool DownloadSubtitles { get; set; }
-        public string ArgDownloadSubtitles => "--write-sub --write-auto-sub";
-
         public bool DownloadPlaylist { get; set; }
-        public string ArgDownloadPlaylist => "--yes-playlist";
 
-        public void setOutputFilePath(string SelectedPath)
-        {
-            OutputFilePath = "-o " + SelectedPath + "\\%(title)s.%(ext)s";
 
-        }
         public string Arguments
         {
             get
             {
-                var argumentList = new List<string>();
-                argumentList.Add(OutputFilePath);
-                if (!IsAudio)
+                var argumentList = new List<string>
                 {
-                    if (DownloadSubtitles) argumentList.Add(ArgDownloadSubtitles);
-                    if (BestVideoQuality) argumentList.Add(ArgBestVideoQuality);
+                     $"-o \"{SelectedPath}\\%(title)s.%(ext)s\""
+                };
+                if (IsAudio) 
+                {
+                    if (DownloadPlaylist) argumentList.Add("--yes-playlist");
+                    else argumentList.Add("--no-playlist");
+
+                    argumentList.Add("--extract-audio");
+                    if (AudioBitrate == AudioBitrate.Good) argumentList.Add("--audio-quality 5");
+                    if (AudioBitrate == AudioBitrate.Great) argumentList.Add("--audio-quality 3");
+                    if (AudioBitrate == AudioBitrate.Best) argumentList.Add("--audio-quality 0");
+
+                    if (AudioFormat == AudioFormat.mp3) argumentList.Add("--audio-format mp3");
+                    if (AudioFormat == AudioFormat.opus) argumentList.Add("--audio-format opus");
                 }
                 else
                 {
-                    argumentList.Add(ArgIsAudio);
-                    if (AudioQuality == AudioQuality.Good) argumentList.Add(ArgAudioQualityGood);
-                    if (AudioQuality == AudioQuality.Great) argumentList.Add(ArgAudioQualityGreat);
-                    if (AudioQuality == AudioQuality.Best) argumentList.Add(ArgAudioQualityBest);
-                    if (IsAudioFormatMP3) argumentList.Add(ArgAudioFormat);
+                    if (DownloadPlaylist)
+                    {
+                        argumentList.Add("--yes-playlist");
+                        argumentList.Add("-f best");
+                    }
+                    else
+                    {
+                        argumentList.Add("--no-playlist");
+                        if (DefaultQuality) argumentList.Add("-f best");
+                    }
+
+                    if (DownloadSubtitles) argumentList.Add("--write-sub --write-auto-sub");
+
+                    if (VideoFormat == VideoFormat.mp4) argumentList.Add("--merge-output-format mp4");
+                    if (VideoFormat == VideoFormat.mkv) argumentList.Add("--merge-output-format mkv");
+                    if (VideoFormat == VideoFormat.webm) argumentList.Add("--merge-output-format webm");
                 }
-                if (DownloadPlaylist) argumentList.Add(ArgDownloadPlaylist);
                 return string.Join(" ", argumentList);
             }
         }
-
 
     }
 }

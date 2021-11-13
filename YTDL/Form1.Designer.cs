@@ -32,13 +32,23 @@ namespace YTDL
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tbURL = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.tcVideoOrAudio = new System.Windows.Forms.TabControl();
             this.tpVideo = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.rbToWEBM = new System.Windows.Forms.RadioButton();
+            this.rbToMKV = new System.Windows.Forms.RadioButton();
+            this.rbToMP4 = new System.Windows.Forms.RadioButton();
             this.cbBestVideoQuality = new System.Windows.Forms.CheckBox();
             this.cbSubs = new System.Windows.Forms.CheckBox();
             this.tpAudio = new System.Windows.Forms.TabPage();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.rbToOPUS = new System.Windows.Forms.RadioButton();
+            this.rbToMP3 = new System.Windows.Forms.RadioButton();
+            this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.rbQualityBest = new System.Windows.Forms.RadioButton();
@@ -51,13 +61,20 @@ namespace YTDL
             this.label1 = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.Cancel = new System.Windows.Forms.Button();
-            this.resultLabel = new System.Windows.Forms.Label();
-            this.cbFormatToMP3 = new System.Windows.Forms.CheckBox();
+            this.dgvVideoQuality = new System.Windows.Forms.DataGridView();
+            this.dgvAudioQuality = new System.Windows.Forms.DataGridView();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.btnShowQualities = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
             this.tcVideoOrAudio.SuspendLayout();
             this.tpVideo.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.tpAudio.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvVideoQuality)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAudioQuality)).BeginInit();
             this.SuspendLayout();
             // 
             // tbURL
@@ -65,12 +82,12 @@ namespace YTDL
             this.tbURL.Location = new System.Drawing.Point(42, 39);
             this.tbURL.Margin = new System.Windows.Forms.Padding(2);
             this.tbURL.Name = "tbURL";
-            this.tbURL.Size = new System.Drawing.Size(743, 27);
+            this.tbURL.Size = new System.Drawing.Size(842, 27);
             this.tbURL.TabIndex = 0;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(42, 418);
+            this.button1.Location = new System.Drawing.Point(39, 716);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(90, 27);
@@ -83,35 +100,92 @@ namespace YTDL
             // 
             this.tcVideoOrAudio.Controls.Add(this.tpVideo);
             this.tcVideoOrAudio.Controls.Add(this.tpAudio);
-            this.tcVideoOrAudio.Location = new System.Drawing.Point(42, 100);
+            this.tcVideoOrAudio.Location = new System.Drawing.Point(41, 448);
             this.tcVideoOrAudio.Margin = new System.Windows.Forms.Padding(2);
             this.tcVideoOrAudio.Name = "tcVideoOrAudio";
             this.tcVideoOrAudio.SelectedIndex = 0;
-            this.tcVideoOrAudio.Size = new System.Drawing.Size(725, 194);
+            this.tcVideoOrAudio.Size = new System.Drawing.Size(397, 120);
             this.tcVideoOrAudio.TabIndex = 3;
             this.tcVideoOrAudio.SelectedIndexChanged += TcVideoOrAudio_SelectedIndexChanged;
             // 
             // tpVideo
             // 
+            this.tpVideo.Controls.Add(this.label7);
+            this.tpVideo.Controls.Add(this.panel3);
             this.tpVideo.Controls.Add(this.cbBestVideoQuality);
             this.tpVideo.Controls.Add(this.cbSubs);
             this.tpVideo.Location = new System.Drawing.Point(4, 29);
             this.tpVideo.Margin = new System.Windows.Forms.Padding(2);
             this.tpVideo.Name = "tpVideo";
             this.tpVideo.Padding = new System.Windows.Forms.Padding(2);
-            this.tpVideo.Size = new System.Drawing.Size(717, 161);
+            this.tpVideo.Size = new System.Drawing.Size(389, 87);
             this.tpVideo.TabIndex = 0;
             this.tpVideo.Text = "Video";
             this.tpVideo.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(4, 57);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(56, 20);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Format";
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.rbToWEBM);
+            this.panel3.Controls.Add(this.rbToMKV);
+            this.panel3.Controls.Add(this.rbToMP4);
+            this.panel3.Location = new System.Drawing.Point(66, 53);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(219, 31);
+            this.panel3.TabIndex = 3;
+            // 
+            // rbToWEBM
+            // 
+            this.rbToWEBM.AutoSize = true;
+            this.rbToWEBM.Location = new System.Drawing.Point(132, 4);
+            this.rbToWEBM.Name = "rbToWEBM";
+            this.rbToWEBM.Size = new System.Drawing.Size(71, 24);
+            this.rbToWEBM.TabIndex = 2;
+            this.rbToWEBM.TabStop = true;
+            this.rbToWEBM.Text = "webm";
+            this.rbToWEBM.UseVisualStyleBackColor = true;
+            this.rbToWEBM.CheckedChanged += new System.EventHandler(this.rbWEBM_CheckedChanged);
+            // 
+            // rbToMKV
+            // 
+            this.rbToMKV.AutoSize = true;
+            this.rbToMKV.Location = new System.Drawing.Point(69, 3);
+            this.rbToMKV.Name = "rbToMKV";
+            this.rbToMKV.Size = new System.Drawing.Size(57, 24);
+            this.rbToMKV.TabIndex = 1;
+            this.rbToMKV.TabStop = true;
+            this.rbToMKV.Text = "mkv";
+            this.rbToMKV.UseVisualStyleBackColor = true;
+            this.rbToMKV.CheckedChanged += new System.EventHandler(this.rbMKV_CheckedChanged);
+            // 
+            // rbToMP4
+            // 
+            this.rbToMP4.AutoSize = true;
+            this.rbToMP4.Location = new System.Drawing.Point(3, 3);
+            this.rbToMP4.Name = "rbToMP4";
+            this.rbToMP4.Size = new System.Drawing.Size(60, 24);
+            this.rbToMP4.TabIndex = 0;
+            this.rbToMP4.TabStop = true;
+            this.rbToMP4.Text = "mp4";
+            this.rbToMP4.UseVisualStyleBackColor = true;
+            this.rbToMP4.CheckedChanged += new System.EventHandler(this.rbMP4_CheckedChanged);
             // 
             // cbBestVideoQuality
             // 
             this.cbBestVideoQuality.AutoSize = true;
             this.cbBestVideoQuality.Location = new System.Drawing.Point(4, 30);
             this.cbBestVideoQuality.Name = "cbBestVideoQuality";
-            this.cbBestVideoQuality.Size = new System.Drawing.Size(165, 24);
+            this.cbBestVideoQuality.Size = new System.Drawing.Size(173, 24);
             this.cbBestVideoQuality.TabIndex = 2;
-            this.cbBestVideoQuality.Text = "Best Quality (webm)";
+            this.cbBestVideoQuality.Text = "Get Best Default mp4";
             this.cbBestVideoQuality.UseVisualStyleBackColor = true;
             this.cbBestVideoQuality.CheckedChanged += new System.EventHandler(this.cbBestVideoQuality_CheckedChanged);
             // 
@@ -129,26 +203,69 @@ namespace YTDL
             // 
             // tpAudio
             // 
-            this.tpAudio.Controls.Add(this.cbFormatToMP3);
+            this.tpAudio.Controls.Add(this.panel2);
+            this.tpAudio.Controls.Add(this.label6);
             this.tpAudio.Controls.Add(this.label2);
             this.tpAudio.Controls.Add(this.panel1);
             this.tpAudio.Location = new System.Drawing.Point(4, 29);
             this.tpAudio.Margin = new System.Windows.Forms.Padding(2);
             this.tpAudio.Name = "tpAudio";
             this.tpAudio.Padding = new System.Windows.Forms.Padding(2);
-            this.tpAudio.Size = new System.Drawing.Size(717, 161);
+            this.tpAudio.Size = new System.Drawing.Size(389, 87);
             this.tpAudio.TabIndex = 1;
             this.tpAudio.Text = "Audio";
             this.tpAudio.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.rbToOPUS);
+            this.panel2.Controls.Add(this.rbToMP3);
+            this.panel2.Location = new System.Drawing.Point(59, 38);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(226, 33);
+            this.panel2.TabIndex = 3;
+            // 
+            // rbToOPUS
+            // 
+            this.rbToOPUS.AutoSize = true;
+            this.rbToOPUS.Location = new System.Drawing.Point(78, 5);
+            this.rbToOPUS.Name = "rbToOPUS";
+            this.rbToOPUS.Size = new System.Drawing.Size(62, 24);
+            this.rbToOPUS.TabIndex = 1;
+            this.rbToOPUS.TabStop = true;
+            this.rbToOPUS.Text = "opus";
+            this.rbToOPUS.UseVisualStyleBackColor = false;
+            this.rbToOPUS.CheckedChanged += new System.EventHandler(this.rbToOPUS_CheckedChanged);
+            // 
+            // rbToMP3
+            // 
+            this.rbToMP3.AutoSize = true;
+            this.rbToMP3.Location = new System.Drawing.Point(5, 5);
+            this.rbToMP3.Name = "rbToMP3";
+            this.rbToMP3.Size = new System.Drawing.Size(60, 24);
+            this.rbToMP3.TabIndex = 0;
+            this.rbToMP3.TabStop = true;
+            this.rbToMP3.Text = "mp3";
+            this.rbToMP3.UseVisualStyleBackColor = true;
+            this.rbToMP3.CheckedChanged += new System.EventHandler(this.rbToMP3_CheckedChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(0, 45);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(56, 20);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Format";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(3, 10);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 20);
+            this.label2.Size = new System.Drawing.Size(53, 20);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Quality";
+            this.label2.Text = "Bitrate";
             // 
             // panel1
             // 
@@ -157,7 +274,7 @@ namespace YTDL
             this.panel1.Controls.Add(this.rbQualityGood);
             this.panel1.Location = new System.Drawing.Point(59, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(518, 33);
+            this.panel1.Size = new System.Drawing.Size(226, 33);
             this.panel1.TabIndex = 0;
             // 
             // rbQualityBest
@@ -211,7 +328,7 @@ namespace YTDL
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(619, 69);
+            this.button2.Location = new System.Drawing.Point(719, 69);
             this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(165, 27);
@@ -223,11 +340,11 @@ namespace YTDL
             // rtbLogs
             // 
             this.rtbLogs.Font = new System.Drawing.Font("Segoe UI", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtbLogs.Location = new System.Drawing.Point(40, 298);
+            this.rtbLogs.Location = new System.Drawing.Point(41, 586);
             this.rtbLogs.Margin = new System.Windows.Forms.Padding(2);
             this.rtbLogs.Name = "rtbLogs";
             this.rtbLogs.ReadOnly = true;
-            this.rtbLogs.Size = new System.Drawing.Size(727, 116);
+            this.rtbLogs.Size = new System.Drawing.Size(844, 116);
             this.rtbLogs.TabIndex = 5;
             this.rtbLogs.Text = "";
             this.rtbLogs.WordWrap = false;
@@ -236,57 +353,97 @@ namespace YTDL
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(40, 276);
+            this.label1.Location = new System.Drawing.Point(39, 564);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(40, 20);
             this.label1.TabIndex = 6;
             this.label1.Text = "Logs";
             // 
-            // backgroundWorker1
+            // dgvVideoQuality
             // 
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            this.dgvVideoQuality.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvVideoQuality.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvVideoQuality.Location = new System.Drawing.Point(42, 121);
+            this.dgvVideoQuality.MultiSelect = false;
+            this.dgvVideoQuality.Name = "dgvVideoQuality";
+            this.dgvVideoQuality.RowHeadersVisible = false;
+            this.dgvVideoQuality.RowHeadersWidth = 51;
+            this.dgvVideoQuality.RowTemplate.Height = 29;
+            this.dgvVideoQuality.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvVideoQuality.Size = new System.Drawing.Size(838, 146);
+            this.dgvVideoQuality.TabIndex = 9;
             // 
-            // Cancel
+            // dgvAudioQuality
             // 
-            this.Cancel.Location = new System.Drawing.Point(146, 417);
-            this.Cancel.Name = "Cancel";
-            this.Cancel.Size = new System.Drawing.Size(94, 29);
-            this.Cancel.TabIndex = 7;
-            this.Cancel.Text = "btnCancel";
-            this.Cancel.UseVisualStyleBackColor = true;
-            this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
+            this.dgvAudioQuality.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvAudioQuality.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvAudioQuality.DefaultCellStyle = dataGridViewCellStyle1;
+            this.dgvAudioQuality.Location = new System.Drawing.Point(42, 297);
+            this.dgvAudioQuality.MultiSelect = false;
+            this.dgvAudioQuality.Name = "dgvAudioQuality";
+            this.dgvAudioQuality.RowHeadersVisible = false;
+            this.dgvAudioQuality.RowHeadersWidth = 51;
+            this.dgvAudioQuality.RowTemplate.Height = 29;
+            this.dgvAudioQuality.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvAudioQuality.Size = new System.Drawing.Size(836, 146);
+            this.dgvAudioQuality.TabIndex = 10;
             // 
-            // resultLabel
+            // label3
             // 
-            this.resultLabel.AutoSize = true;
-            this.resultLabel.Location = new System.Drawing.Point(259, 421);
-            this.resultLabel.Name = "resultLabel";
-            this.resultLabel.Size = new System.Drawing.Size(81, 20);
-            this.resultLabel.TabIndex = 8;
-            this.resultLabel.Text = "resultLabel";
-            this.resultLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(42, 98);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(99, 20);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Video Quality";
             // 
-            // cbFormatToMP3
+            // label4
             // 
-            this.cbFormatToMP3.AutoSize = true;
-            this.cbFormatToMP3.Location = new System.Drawing.Point(5, 42);
-            this.cbFormatToMP3.Name = "cbFormatToMP3";
-            this.cbFormatToMP3.Size = new System.Drawing.Size(132, 24);
-            this.cbFormatToMP3.TabIndex = 2;
-            this.cbFormatToMP3.Text = "Format To mp3";
-            this.cbFormatToMP3.UseVisualStyleBackColor = true;
-            this.cbFormatToMP3.CheckedChanged += new System.EventHandler(this.cbFormatToMP3_CheckedChanged);
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(41, 274);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(100, 20);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Audio Quality";
+            // 
+            // btnShowQualities
+            // 
+            this.btnShowQualities.Location = new System.Drawing.Point(197, 69);
+            this.btnShowQualities.Name = "btnShowQualities";
+            this.btnShowQualities.Size = new System.Drawing.Size(133, 29);
+            this.btnShowQualities.TabIndex = 13;
+            this.btnShowQualities.Text = "Show Qualities";
+            this.btnShowQualities.UseVisualStyleBackColor = true;
+            this.btnShowQualities.Click += new System.EventHandler(this.btnShowQualities_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(42, 17);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(93, 20);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "youtube URL";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(794, 473);
-            this.Controls.Add(this.resultLabel);
-            this.Controls.Add(this.Cancel);
+            this.ClientSize = new System.Drawing.Size(920, 763);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.btnShowQualities);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.dgvAudioQuality);
+            this.Controls.Add(this.dgvVideoQuality);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbDownloadPlaylist);
             this.Controls.Add(this.rtbLogs);
@@ -300,13 +457,24 @@ namespace YTDL
             this.tcVideoOrAudio.ResumeLayout(false);
             this.tpVideo.ResumeLayout(false);
             this.tpVideo.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.tpAudio.ResumeLayout(false);
             this.tpAudio.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvVideoQuality)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAudioQuality)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
+        }
+
+        private void TcVideoOrAudio_SelectedIndexChanged1(object sender, System.EventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
 
 
@@ -334,8 +502,20 @@ namespace YTDL
         private RadioButton rbQualityGood;
         private CheckBox cbBestVideoQuality;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private Button Cancel;
-        private Label resultLabel;
-        private CheckBox cbFormatToMP3;
+        private DataGridView dgvVideoQuality;
+        private DataGridView dgvAudioQuality;
+        private Label label3;
+        private Label label4;
+        private Button btnShowQualities;
+        private Label label5;
+        private Label label7;
+        private Panel panel3;
+        private RadioButton rbToWEBM;
+        private RadioButton rbToMKV;
+        private RadioButton rbToMP4;
+        private Panel panel2;
+        private RadioButton rbToOPUS;
+        private RadioButton rbToMP3;
+        private Label label6;
     }
 }
